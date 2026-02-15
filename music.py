@@ -19,7 +19,7 @@ def extract_features(audio_path):
     clipwise_output, embeddings = model.inference(audio_tensor)
     clipwise_output = clipwise_output[0]  # remove batch dim
 
-    # Extract top 5 tags + weights
+    # Extract top 10 tags + weights
     top_indices = np.argsort(clipwise_output)[::-1][:10]
     tags_with_weights = [
         {"tag": model.labels[i], "weight": float(clipwise_output[i])} 
