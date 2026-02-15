@@ -53,7 +53,7 @@ def converter(arr_topics, url, debug=False):
     tags_str = ", ".join(tags)
 
     data = {
-        "model": "gemma3:12b",
+        "model": "llava:13b",
         "prompt": f"""Analyze this image and return relevant tags with importance weights.
 
 STEP 1: Describe what you literally see in the image - objects, animals, people, text, colors, setting, mood.
