@@ -10,7 +10,6 @@ def converter(arr_topics, url, debug=False):
 
     response_ = requests.get(im_url, headers=headers)
     image_data = response_.content
-    debug = 1
 
     # Debug: Check if image downloaded correctly
     if debug:

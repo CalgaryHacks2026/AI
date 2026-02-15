@@ -23,7 +23,7 @@ class ImageRequest(BaseModel):
 
 @app.post("/image-to-tags")
 def convert_image(request: ImageRequest):
-    result = converter(request.tags, request.image_url)
+    result = converter(request.tags, request.image_url, debug=True)
     return result
 
 
