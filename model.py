@@ -33,12 +33,10 @@ def converter(arr_topics, url):
     Assign a weight between 0 and 1
 
     Format:
-    [
-    {{"tag":"dog","weight":0.95}},
-    {{"tag":"out","weight":0.80}}
-    ]
+    [{{"tag":"dog","weight":0.95}},{{"tag":"out","weight":0.80}}]
 
     - Make sure to only ever respond with JSON only. No other text is allowed.
+    - Make sure there's never any newline characters in the response.
     """,
         "images": [image_b64],
         "stream": False,
