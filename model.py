@@ -37,6 +37,8 @@ def converter(arr_topics, url):
     {{"tag":"dog","weight":0.95}},
     {{"tag":"out","weight":0.80}}
     ]
+
+    - Make sure to only ever respond with JSON only. No other text is allowed.
     """,
         "images": [image_b64],
         "stream": False,
