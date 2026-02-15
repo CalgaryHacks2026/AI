@@ -13,7 +13,7 @@ This project is an AI-powered music search and recommendation system developed f
 
 ## Project Structure
 - `main.py`: Entry point for running the application
-- `model.py`: Implements image functionality
+- `model.py`: Connects everything as the main file
 - `music.py`: Handles music data processing
 - `search.py`: Implements search functionality
 - `songret.py`: Song retrieval and recommendation logic
