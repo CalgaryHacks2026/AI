@@ -1,9 +1,11 @@
-import requests
 import base64
-def converter(arr_topics,url):
-    im_url=url
-    headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
+import requests
+
+
+def converter(arr_topics, url):
+    im_url = url
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
     response_ = requests.get(im_url, headers=headers)
     image_data = response_.content
@@ -24,7 +26,7 @@ def converter(arr_topics,url):
 
     first take these tags:
     {tags}
-    Check the image and add any tags you think are relevant to the image. Then add your own tags up to the best 10 from your own after these tags. 
+    Check the image and add any tags you think are relevant to the image. Then add your own tags up to the best 10 from your own after these tags.
     Then rank all the tags by importance to the image and assign a weight between 0 and 1 to each tag.
     Higher weight means more important visually.
     Keep only the most important tags
@@ -35,14 +37,14 @@ def converter(arr_topics,url):
     {{"tag":"dog","weight":0.95}},
     {{"tag":"out","weight":0.80}}
     ]
-    ""","images": [image_b64],
-        "stream": False
+    """,
+        "images": [image_b64],
+        "stream": False,
     }
 
     response = requests.post(url, json=data)
-    print(response.json()["response"])
+    return response.json()["response"]
 
-    return response.json()
 
 # im_url="https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg"
 # tags = [
