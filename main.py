@@ -1,6 +1,6 @@
+from fastapi import FastAPI
 from pydantic import BaseModel
 
-from main import FastAPI
 from model import converter
 
 app = FastAPI()
