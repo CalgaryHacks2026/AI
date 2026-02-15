@@ -1,4 +1,5 @@
 import base64
+import json
 
 import requests
 
@@ -55,25 +56,36 @@ def converter(arr_topics, url, debug=False):
         "model": "gemma3:12b",
         "prompt": f"""Analyze this image and return relevant tags with importance weights.
 
-STEP 1: Look at the image carefully and identify what you see (objects, scene, mood, style, etc.)
+STEP 1: Describe what you literally see in the image - objects, animals, people, text, colors, setting, mood.
 
-STEP 2: From the provided tag list below, select ONLY tags that are actually relevant to this image:
+STEP 2: Create tags based on what you ACTUALLY SEE. Prioritize:
+  - Main subject (what is the focus?)
+  - Secondary elements (what else is visible?)
+  - Setting/environment (indoor, outdoor, kitchen, etc.)
+  - Style/type (photo, meme, illustration, etc.)
+  - Colors (if prominent)
+  - Mood/tone (funny, serious, cute, etc.)
+  - Any visible text or logos
+
+STEP 3: Check if any of these provided tags match what you see:
 [{tags_str}]
+Only use tags from this list if they ACTUALLY appear in the image.
 
-STEP 3: Add your own descriptive tags for things you see that aren't in the list above (e.g., cat, dog, person, building, text, meme, color names, etc.)
+You MUST return exactly 10-15 tags. To reach 10 tags, use descriptive tags like:
+- The main subject and what it's doing
+- Colors you see (white, orange, gray, etc.)
+- Composition (close-up, centered, etc.)
+- Image type (photo, meme, screenshot, etc.)
 
-STEP 4: Combine the relevant tags from both steps and rank by visual importance.
+ACCURACY IS CRITICAL: Every tag must describe something actually in the image. Never invent content.
 
-RULES:
-- Return 5-15 tags maximum
-- Only include tags that genuinely match the image content
-- If none of the provided tags match, use only your own tags
-- Weight 0.9-1.0 = dominant/central element
-- Weight 0.6-0.8 = clearly visible secondary element
-- Weight 0.3-0.5 = minor/background element
-- Do NOT include tags just because they were in the provided list
+WEIGHTS:
+- 0.9-1.0 = main subject/focus
+- 0.7-0.8 = clearly visible element
+- 0.5-0.6 = secondary/supporting element
+- 0.3-0.4 = minor detail or mood
 
-OUTPUT FORMAT (JSON array only, no other text, no markdown):
+OUTPUT FORMAT (JSON array only, no markdown, no explanation):
 [{{"tag":"example","weight":0.95}},{{"tag":"another","weight":0.80}}]""",
         "images": [image_b64],
         "stream": False,
@@ -96,7 +108,32 @@ OUTPUT FORMAT (JSON array only, no other text, no markdown):
         result = result[:-3]
     result = result.strip()
 
-    return result
+    # Parse and validate JSON, deduplicate tags
+    try:
+        tags_list = json.loads(result)
+
+        # Deduplicate by tag name (keep first occurrence with highest weight)
+        seen = {}
+        for item in tags_list:
+            tag = item.get("tag", "").lower().strip()
+            weight = item.get("weight", 0)
+            if tag and (tag not in seen or weight > seen[tag]["weight"]):
+                seen[tag] = {"tag": tag, "weight": weight}
+
+        # Sort by weight descending
+        deduplicated = sorted(seen.values(), key=lambda x: x["weight"], reverse=True)
+
+        if debug:
+            print(
+                f"[DEBUG] Deduplicated from {len(tags_list)} to {len(deduplicated)} tags"
+            )
+
+        return json.dumps(deduplicated)
+    except json.JSONDecodeError as e:
+        if debug:
+            print(f"[DEBUG] JSON parse error: {e}")
+        # Return raw result if JSON parsing fails
+        return result
 
 
 if __name__ == "__main__":
